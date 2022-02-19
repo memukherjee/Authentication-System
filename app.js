@@ -44,13 +44,12 @@ userSchema.plugin(passportLocalMongoose);
 
 const User = new mongoose.model("User", userSchema);
 
-const LocalStrategy = require('passport-local').Strategy
+const LocalStrategy = require("passport-local").Strategy;
 
 passport.use(User.createStrategy());
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
 
 //Home Route
 app.get("/", (req, res) => {
@@ -63,53 +62,57 @@ app
   .get((req, res) => {
     res.render("login");
   })
-  .post((req, res) => {
-    // User.findOne({email:email},(err,founduser)=>{
-    //     if(err)
-    //         console.log(err)
-    //     else{
-    //         if(founduser){
-    //             // bcrypt.compare(password, founduser.password, function(err, match) {
-    //             //     if(match){
-    //             //         console.log("email and password matched, login successful")
-    //             //         res.render('secrets')
-    //             //     }
-    //             //     else{
-    //             //         res.send("Invalid password")
-    //             //     }
-    //             // });
-    //             // if(founduser.password===password){
-    //             //     console.log("email and password matched, login successful")
-    //             //     res.render('secrets')
-    //             // }
-    //             // else{
-    //             //     res.send("Invalid password")
-    //             // }
-    //             res.send('found')
-    //         }
-    //         else{
-    //             res.send("User not found")
-    //         }
-    //     }
-    // })
+  .post(
+    passport.authenticate("local", {
+      successRedirect: "/secrets",
+      failureRedirect: "/login",
+    }),
+    (req, res) => {
+      // User.findOne({email:email},(err,founduser)=>{
+      //     if(err)
+      //         console.log(err)
+      //     else{
+      //         if(founduser){
+      //             // bcrypt.compare(password, founduser.password, function(err, match) {
+      //             //     if(match){
+      //             //         console.log("email and password matched, login successful")
+      //             //         res.render('secrets')
+      //             //     }
+      //             //     else{
+      //             //         res.send("Invalid password")
+      //             //     }
+      //             // });
+      //             // if(founduser.password===password){
+      //             //     console.log("email and password matched, login successful")
+      //             //     res.render('secrets')
+      //             // }
+      //             // else{
+      //             //     res.send("Invalid password")
+      //             // }
+      //             res.send('found')
+      //         }
+      //         else{
+      //             res.send("User not found")
+      //         }
+      //     }
+      // })
 
-    const user = new User({
-      username: req.body.email,
-      password: req.body.password,
-    });
-    req.login(user, function (err) {
-      if (err) {
-        console.log(err);
-      } else {
-        passport.authenticate("local")(req, res, function(){
-          res.redirect("/secrets");
-        });
-      }
-    });
-
-    
-
-  });
+      // const user = new User({
+      //   username: req.body.username,
+      //   password: req.body.password,
+      // });
+      // req.login(user, function (err) {
+      //   if (err) {
+      //     console.log(err);
+      //   } else {
+      //     console.log(user)
+      //     passport.authenticate("local")(req, res, function(){
+      //       res.redirect("/secrets");
+      //     });
+      //   }
+      // });
+    }
+  );
 
 //Register route
 
@@ -154,11 +157,10 @@ app
     );
   });
 
-
-app.get('/logout',(req,res)=>{
-    req.logout()
-    res.redirect("/")
-})
+app.get("/logout", (req, res) => {
+  req.logout();
+  res.redirect("/");
+});
 
 app.route("/secrets").get((req, res) => {
   if (req.isAuthenticated()) {
