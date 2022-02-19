@@ -44,10 +44,13 @@ userSchema.plugin(passportLocalMongoose);
 
 const User = new mongoose.model("User", userSchema);
 
+const LocalStrategy = require('passport-local').Strategy
+
 passport.use(User.createStrategy());
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
 
 //Home Route
 app.get("/", (req, res) => {
@@ -98,11 +101,14 @@ app
       if (err) {
         console.log(err);
       } else {
-        passport.authenticate("local")(req,res,function(){
-            res.redirect("/secrets");
-        })
+        passport.authenticate("local")(req, res, function(){
+          res.redirect("/secrets");
+        });
       }
     });
+
+    
+
   });
 
 //Register route
