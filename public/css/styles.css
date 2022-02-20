@@ -1,6 +1,15 @@
-
 body {
-  background-color: #E8ECEF;
+  background-color: #cccccc;
+}
+
+.card{
+  background: rgba(255, 255, 255, 0.452);
+  border-radius: 10px;
+  border: 1px solid #a1a1a1;
+}
+
+.jumbotron{
+  background: transparent;
 }
 
 .centered {
