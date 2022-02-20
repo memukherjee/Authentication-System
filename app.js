@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema({
   username: String,
   password: String,
   googleId: String,
+  secret: String,
 });
 
 //Encryption using mongoose.encryption
@@ -204,13 +205,40 @@ app.get('/auth/google/secrets',
   });
 
 app.route("/secrets").get((req, res) => {
+  User.find({'secret': {$ne: null}},(err, foundUsers)=>{
+    if(err)
+      console.log(err)
+    else{
+      res.render('secrets',{secretUsers: foundUsers})
+    }
+  })
+});
+
+
+app.route('/submit')
+.get((req,res)=>{
   if (req.isAuthenticated()) {
-    console.log("login successful")
-    res.render("secrets")
+    res.render("submit")
   } else {
-    console.log('login unsuccessful')
     res.redirect("/login")
   }
-});
+})
+.post((req,res)=>{
+  const submittedSecret = req.body.secret
+  // console.log(req.user.id);
+  User.findById(req.user.id, (err,foundUser)=>{
+    if(err)
+      console.log(err)
+    else{
+      if(foundUser){
+        foundUser.secret = submittedSecret
+        foundUser.save(()=>{
+          res.redirect('/secrets')
+        })
+      }
+    }
+  })
+})
+
 
 app.listen(port, () => console.log("server started at port " + port));
